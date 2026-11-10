@@ -273,16 +273,19 @@ $qrCodeApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data='
         cert.style.transform = '';
         return;
       }
-      const pad = 24;
-      const availW = window.innerWidth - (pad * 2);
-      const availH = window.innerHeight - (pad * 2);
+      const padX = window.innerWidth <= 640 ? 12 : 24;
+      const padTop = window.innerWidth <= 640 ? 55 : 70;
+      const padBottom = window.innerWidth <= 640 ? 12 : 20;
+      const availW = Math.max(window.innerWidth - (padX * 2), 50);
+      const availH = Math.max(window.innerHeight - padTop - padBottom, 50);
       const scale = Math.min(availW / 1578, availH / 1118, 1);
-      cert.style.transform = 'scale(' + scale + ')';
-      cert.style.transformOrigin = 'center center';
+      const offsetY = (padTop - padBottom) / 2;
+      cert.style.transform = `translate(-50%, calc(-50% + ${offsetY}px)) scale(${scale})`;
     }
 
     window.addEventListener('resize', updateFitScale);
     window.addEventListener('DOMContentLoaded', updateFitScale);
+    window.addEventListener('load', updateFitScale);
     window.addEventListener('beforeprint', () => {
       const cert = document.querySelector('.certificate');
       if (cert) cert.style.transform = '';
